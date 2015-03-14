@@ -190,7 +190,7 @@ class EncryptionModel extends Encryption
 	 * 이 방법으로 암호화한 문자열은 공개키를 사용하여 복호화할 수 있다.
 	 * 암호화에 성공한 경우 그 결과를 반환하며, 비밀키가 생성되지 않은 경우 false를 반환한다.
 	 */
-	public function rsaEncryptWithPrivateKey($plaintext)
+	public function rsaEncryptWithPrivateKey($plaintext, $passphrase = null)
 	{
 		// 모듈 설정을 확인한다.
 		if ($this->config === null) $this->config = $this->getConfig();
@@ -200,7 +200,7 @@ class EncryptionModel extends Encryption
 		$plaintext = gzcompress($plaintext);
 		
 		// 개인키를 가져온다.
-		$privkey = @openssl_pkey_get_private($this->config->rsa_privkey);
+		$privkey = @openssl_pkey_get_private($this->config->rsa_privkey, strval($passphrase));
 		if ($privkey === false) return false;
 		
 		// 평문을 암호화한다.
@@ -224,7 +224,7 @@ class EncryptionModel extends Encryption
 	 * 복호화에 성공한 경우 평문을 반환하며, 비밀키가 생성되지 않았거나
 	 * 정상적인 암호문이 아닌 경우에는 false를 반환한다.
 	 */
-	public function rsaDecryptWithPrivateKey($ciphertext)
+	public function rsaDecryptWithPrivateKey($ciphertext, $passphrase = null)
 	{
 		// 모듈 설정을 확인한다.
 		if ($this->config === null) $this->config = $this->getConfig();
@@ -250,7 +250,7 @@ class EncryptionModel extends Encryption
 		if ($hmac !== $hmac_check) return false;
 		
 		// 개인키를 가져온다.
-		$privkey = @openssl_pkey_get_private($this->config->rsa_privkey);
+		$privkey = @openssl_pkey_get_private($this->config->rsa_privkey, strval($passphrase));
 		if ($privkey === false) return false;
 		
 		// 복호화를 시도한다.
