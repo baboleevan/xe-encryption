@@ -82,27 +82,27 @@ class EncryptionModel extends Encryption
 		// 암호문에서 초기화 벡터와 HMAC을 분리한다.
 		$ciphertext = @base64_decode(substr($ciphertext, 4));
 		if ($ciphertext === false) return false;
-        if (strlen($ciphertext) <= $iv_size + $hmac_size) return false;
-        $iv = substr($ciphertext, 0, $iv_size);
-        $hmac = substr($ciphertext, $iv_size, $hmac_size);
-        $ciphertext = substr($ciphertext, $iv_size + $hmac_size);
-        
+		if (strlen($ciphertext) <= $iv_size + $hmac_size) return false;
+		$iv = substr($ciphertext, 0, $iv_size);
+		$hmac = substr($ciphertext, $iv_size, $hmac_size);
+		$ciphertext = substr($ciphertext, $iv_size + $hmac_size);
+		
 		// 비밀키로부터 암호화 키를 생성한다.
 		$key_size = mcrypt_get_key_size($cipher, 'cbc');
 		$key = substr(hash('sha256', $this->config->aes_key, true), 0, $key_size);
 		
 		// HMAC이 일치하는지 체크한다.
-        $hmac_check = substr(hash_hmac('sha256', $ciphertext, $key . $iv, true), 0, $hmac_size);
-        if ($hmac !== $hmac_check) return false;
-        
-        // 복호화를 시도한다.
-        $plaintext = @mcrypt_decrypt($cipher, $key, $ciphertext, 'cbc', $iv);
-        if ($plaintext === false) return false;
-        
-        // 압축을 해제하여 평문을 구한다.
-        $plaintext = @gzuncompress($plaintext);
-        if ($plaintext === false) return false;
-        return $plaintext;
+		$hmac_check = substr(hash_hmac('sha256', $ciphertext, $key . $iv, true), 0, $hmac_size);
+		if ($hmac !== $hmac_check) return false;
+		
+		// 복호화를 시도한다.
+		$plaintext = @mcrypt_decrypt($cipher, $key, $ciphertext, 'cbc', $iv);
+		if ($plaintext === false) return false;
+		
+		// 압축을 해제하여 평문을 구한다.
+		$plaintext = @gzuncompress($plaintext);
+		if ($plaintext === false) return false;
+		return $plaintext;
 	}
 	
 	/**
@@ -160,16 +160,16 @@ class EncryptionModel extends Encryption
 		// 암호문에서 초기화 벡터와 HMAC을 분리한다.
 		$ciphertext = @base64_decode(substr($ciphertext, 4));
 		if ($ciphertext === false) return false;
-        if (strlen($ciphertext) <= $hmac_size) return false;
-        $hmac = substr($ciphertext, 0, $hmac_size);
-        $ciphertext = substr($ciphertext, $hmac_size);
-        
-        // HMAC이 일치하는지 체크한다.
-        $hmac_key = hash('sha256', trim($this->config->rsa_pubkey));
-        $hmac_check = substr(hash_hmac('sha256', $ciphertext, $hmac_key, true), 0, $hmac_size);
-        if ($hmac !== $hmac_check) return false;
-        
-        // 공개키를 가져온다.
+		if (strlen($ciphertext) <= $hmac_size) return false;
+		$hmac = substr($ciphertext, 0, $hmac_size);
+		$ciphertext = substr($ciphertext, $hmac_size);
+		
+		// HMAC이 일치하는지 체크한다.
+		$hmac_key = hash('sha256', trim($this->config->rsa_pubkey));
+		$hmac_check = substr(hash_hmac('sha256', $ciphertext, $hmac_key, true), 0, $hmac_size);
+		if ($hmac !== $hmac_check) return false;
+		
+		// 공개키를 가져온다.
 		$pubkey = @openssl_pkey_get_public($this->config->rsa_pubkey);
 		if ($pubkey === false) return false;
 		
@@ -240,16 +240,16 @@ class EncryptionModel extends Encryption
 		// 암호문에서 초기화 벡터와 HMAC을 분리한다.
 		$ciphertext = @base64_decode(substr($ciphertext, 4));
 		if ($ciphertext === false) return false;
-        if (strlen($ciphertext) <= $hmac_size) return false;
-        $hmac = substr($ciphertext, 0, $hmac_size);
-        $ciphertext = substr($ciphertext, $hmac_size);
-        
-        // HMAC이 일치하는지 체크한다.
-        $hmac_key = hash('sha256', trim($this->config->rsa_pubkey));
-        $hmac_check = substr(hash_hmac('sha256', $ciphertext, $hmac_key, true), 0, $hmac_size);
-        if ($hmac !== $hmac_check) return false;
-        
-        // 개인키를 가져온다.
+		if (strlen($ciphertext) <= $hmac_size) return false;
+		$hmac = substr($ciphertext, 0, $hmac_size);
+		$ciphertext = substr($ciphertext, $hmac_size);
+		
+		// HMAC이 일치하는지 체크한다.
+		$hmac_key = hash('sha256', trim($this->config->rsa_pubkey));
+		$hmac_check = substr(hash_hmac('sha256', $ciphertext, $hmac_key, true), 0, $hmac_size);
+		if ($hmac !== $hmac_check) return false;
+		
+		// 개인키를 가져온다.
 		$privkey = @openssl_pkey_get_private($this->config->rsa_privkey);
 		if ($privkey === false) return false;
 		
