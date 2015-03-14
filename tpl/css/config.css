@@ -1,0 +1,50 @@
+
+#encryption_aes_key, #encryption_rsa_privkey, #encryption_rsa_pubkey {
+	font-family: Consolas, "Courier New", monospace;
+	word-break: break-all;
+	word-wrap: break-word;
+	box-sizing: border-box;
+	width: 100%;
+	height: 60px;
+	resize: vertical;
+	background: #fff;
+	cursor: text;
+}
+
+#encryption_rsa_privkey {
+	height: 120px;
+}
+
+#encryption_rsa_pubkey {
+	height: 120px;
+}
+
+#encryption_aes_keygen, #encryption_rsa_keygen {
+	padding: 4px 12px;
+}
+
+#encryption_rsa_keygen_needed {
+	padding: 5px 0;
+}
+
+#encryption_rsa_bits {
+	background: #fff;
+}
+
+#encryption_aes_store_filename, #encryption_rsa_store_filename {
+	box-sizing: border-box;
+	width: 100%;
+	height: 26px;
+}
+
+#encryption_delete_aes_key, #encryption_delete_rsa_key {
+	padding: 4px 12px;
+}
+
+div.encryption_description {
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	background: #fafafa;
+	padding: 12px;
+	margin-bottom: 12px;
+}

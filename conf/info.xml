@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="0.2">
+	<title xml:lang="ko">암호화 모듈</title>
+	<title xml:lang="en">Encryption Module</title>
+	<description xml:lang="ko">
+		대칭키(AES) 및 비대칭키(RSA) 암호화 루틴을 제공하는 모듈입니다.
+	</description>
+	<description xml:lang="en">
+		This module provides routines for symmetric (AES) and asymmetric (RSA) encryption.
+	</description>
+	<version>1.0</version>
+	<date>2015-03-14</date>
+	<author email_address="kijin@kijinsung.com" link="https://github.com/kijin">
+		<name xml:lang="ko">Kijin Sung</name>
+		<name xml:lang="en">Kijin Sung</name>
+	</author>
+</module>

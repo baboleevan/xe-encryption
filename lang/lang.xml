@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<lang>
+	<item name="cmd_encryption_module">
+		<value xml:lang="ko"><![CDATA[암호화 모듈]]></value>
+		<value xml:lang="en"><![CDATA[Encryption Module]]></value>
+	</item>
+	<item name="cmd_encryption_symmetric">
+		<value xml:lang="ko"><![CDATA[대칭키 암호화 (AES)]]></value>
+		<value xml:lang="en"><![CDATA[Symmetric Encryption (AES)]]></value>
+	</item>
+	<item name="cmd_encryption_asymmetric">
+		<value xml:lang="ko"><![CDATA[비대칭키 암호화 (RSA)]]></value>
+		<value xml:lang="en"><![CDATA[Asymmetric Encryption (RSA)]]></value>
+	</item>
+	<item name="cmd_encryption_bit_suffix">
+		<value xml:lang="ko"><![CDATA[비트]]></value>
+		<value xml:lang="en"><![CDATA[-bit]]></value>
+	</item>
+	<item name="cmd_encryption_bits">
+		<value xml:lang="ko"><![CDATA[암호화 키 길이]]></value>
+		<value xml:lang="en"><![CDATA[Encryption key size]]></value>
+	</item>
+	<item name="cmd_encryption_hmac_bits">
+		<value xml:lang="ko"><![CDATA[HMAC 길이]]></value>
+		<value xml:lang="en"><![CDATA[HMAC size]]></value>
+	</item>
+	<item name="cmd_encryption_key">
+		<value xml:lang="ko"><![CDATA[비밀키]]></value>
+		<value xml:lang="en"><![CDATA[Secret key]]></value>
+	</item>
+	<item name="cmd_encryption_privkey">
+		<value xml:lang="ko"><![CDATA[개인키]]></value>
+		<value xml:lang="en"><![CDATA[Private key]]></value>
+	</item>
+	<item name="cmd_encryption_pubkey">
+		<value xml:lang="ko"><![CDATA[공개키]]></value>
+		<value xml:lang="en"><![CDATA[Public key]]></value>
+	</item>
+	<item name="cmd_encryption_keygen">
+		<value xml:lang="ko"><![CDATA[키 생성]]></value>
+		<value xml:lang="en"><![CDATA[Generate key]]></value>
+	</item>
+	<item name="cmd_encryption_keygen_needed">
+		<value xml:lang="ko"><![CDATA[먼저 개인키를 생성해 주십시오.]]></value>
+		<value xml:lang="en"><![CDATA[Please generate the private key first.]]></value>
+	</item>
+	<item name="cmd_encryption_store">
+		<value xml:lang="ko"><![CDATA[키 저장 장소]]></value>
+		<value xml:lang="en"><![CDATA[Key storage medium]]></value>
+	</item>
+	<item name="cmd_encryption_store_db">
+		<value xml:lang="ko"><![CDATA[DB]]></value>
+		<value xml:lang="en"><![CDATA[DB]]></value>
+	</item>
+	<item name="cmd_encryption_store_file">
+		<value xml:lang="ko"><![CDATA[파일]]></value>
+		<value xml:lang="en"><![CDATA[File]]></value>
+	</item>
+	<item name="cmd_encryption_store_filename">
+		<value xml:lang="ko"><![CDATA[키 저장 파일명]]></value>
+		<value xml:lang="en"><![CDATA[Key storage filename]]></value>
+	</item>
+	<item name="cmd_encryption_delete_key">
+		<value xml:lang="ko"><![CDATA[키 삭제]]></value>
+		<value xml:lang="en"><![CDATA[Delete keys]]></value>
+	</item>
+	<item name="cmd_encryption_delete_symmetric_key">
+		<value xml:lang="ko"><![CDATA[대칭키 삭제]]></value>
+		<value xml:lang="en"><![CDATA[Delete symmetric key]]></value>
+	</item>
+	<item name="cmd_encryption_delete_asymmetric_key">
+		<value xml:lang="ko"><![CDATA[비대칭키 삭제]]></value>
+		<value xml:lang="en"><![CDATA[Delete asymmetric key]]></value>
+	</item>
+	<item name="cmd_encryption_confirm_delete_symmetric_key">
+		<value xml:lang="ko"><![CDATA[대칭키를 정말 삭제하시겠습니까?]]></value>
+		<value xml:lang="en"><![CDATA[Would you really like to delete your symmetric encryption key?]]></value>
+	</item>
+	<item name="cmd_encryption_confirm_delete_asymmetric_key">
+		<value xml:lang="ko"><![CDATA[비대칭키를 정말 삭제하시겠습니까?]]></value>
+		<value xml:lang="en"><![CDATA[Would you really like to delete your asymmetric encryption key?]]></value>
+	</item>
+	<item name="msg_encryption_delete_key">
+		<value xml:lang="ko"><![CDATA[경고! 키를 삭제하면 기존의 키를 사용하여 암호화한 데이터를 더이상 해독할 수 없게 됩니다.]]></value>
+		<value xml:lang="en"><![CDATA[Warning! If you delete a key, you will no longer be able to access data that has been encrypted with it.]]></value>
+	</item>
+	<item name="msg_encryption_file_storage">
+		<value xml:lang="ko"><![CDATA[주의! 키가 저장된 파일에 웹으로 접근할 수 없도록 조치해 주십시오.]]></value>
+		<value xml:lang="en"><![CDATA[Caution! Please make sure that the key file is not accessible over the Web.]]></value>
+	</item>
+	<item name="msg_encryption_symmetric_help">
+		<value xml:lang="ko"><![CDATA[대칭키 암호화는 암호화와 복호화에 동일한 키(암호)를 사용합니다. 빠르고 강하고 효율적인 알고리듬으로, 대부분의 암호화 작업에 적합합니다.]]></value>
+		<value xml:lang="en"><![CDATA[The same key is used to encrypt and decrypt data. This algorithm is fast, strong, and efficient, and therefore suitable for most encryption tasks.]]></value>
+	</item>
+	<item name="msg_encryption_asymmetric_help">
+		<value xml:lang="ko"><![CDATA[개인키로 암호화한 데이터는 공개키로 복호화되고, 공개키로 암호화한 데이터는 개인키로 복호화됩니다. 암호화에 사용한 키를 노출하지 않고도 서로 데이터를 주고받을 수 있다는 장점이 있지만, 대칭키 알고리듬보다 효율이 떨어집니다. 비트수가 높더라도 실제로는 256비트 대칭키 암호화 알고리듬보다 약합니다.]]></value>
+		<value xml:lang="en"><![CDATA[Data encrypted with the private key can be decrypted with the public key, and vice versa. This algorithm can be used to exchange data without exposing each other's private keys, but it is less efficient than symmetric encryption. The high number of bits does not necessarily make this algorithm stronger.]]></value>
+	</item>
+	<item name="msg_encryption_symmetric_unavailable">
+		<value xml:lang="ko"><![CDATA[대칭키 암호화를 사용할 수 없습니다. mcrypt 모듈을 설치해 주십시오.]]></value>
+		<value xml:lang="en"><![CDATA[Symmetric encryption is not available on this server. Please install the mcrypt extension.]]></value>
+	</item>
+	<item name="msg_encryption_asymmetric_unavailable">
+		<value xml:lang="ko"><![CDATA[비대칭키 암호화를 사용할 수 없습니다. openssl 모듈을 설치해 주십시오.]]></value>
+		<value xml:lang="en"><![CDATA[Asymmetric encryption is not available on this server. Please install the openssl extension.]]></value>
+	</item>
+	<item name="msg_encryption_symmetric_key_save_failure">
+		<value xml:lang="ko"><![CDATA[대칭키 암호화를 위한 비밀키를 저장하는 도중 오류가 발생했습니다. 저장 경로를 다시 확인해 주십시오.]]></value>
+		<value xml:lang="en"><![CDATA[An error occurred while saving the secret key for symmetric encryption. Please check the file path.]]></value>
+	</item>
+	<item name="msg_encryption_asymmetric_key_save_failure">
+		<value xml:lang="ko"><![CDATA[비대칭키 암호화를 위한 비밀키를 저장하는 도중 오류가 발생했습니다. 저장 경로를 다시 확인해 주십시오.]]></value>
+		<value xml:lang="en"><![CDATA[An error occurred while saving the secret key for asymmetric encryption. Please check the file path.]]></value>
+	</item>
+	<item name="msg_encryption_general_introduction_1">
+		<value xml:lang="ko"><![CDATA[이 모듈은 대칭키(AES) 및 비대칭키(RSA) 암호화 루틴을 제공합니다. XE 모듈이나 애드온 개발자를 위한 기능으로, 최종 사용자는 가능하면 설정을 변경하지 마시기 바랍니다. 암호화 기능이 필요한 소스코드에서 직접 호출하여야 하며, 관련 루틴을 호출하지 않는 다른 모듈의 데이터를 자동으로 암호화해 주지는 않습니다.]]></value>
+		<value xml:lang="en"><![CDATA[This module provides routines for symmetric (AES) and asymmetric (RSA) encryption. It is intended for module and add-on developers; end users should not change these settings if possible. The encryption and decryption routines must be called directly from source code that uses them. This module will not automatically encrypt unrelated data.]]></value>
+	</item>
+	<item name="msg_encryption_general_introduction_2">
+		<value xml:lang="ko"><![CDATA[이 페이지에서는 암호화 키를 생성하거나 삭제하고, 그 밖의 몇 가지 설정을 변경할 수 있습니다. 한 번 생성한 키를 변경하거나 삭제하면 기존에 암호화된 데이터를 해독하지 못하게 되니 주의하시기 바랍니다. (대칭키 길이와 HMAC 길이, 저장 장소 등은 변경해도 무방합니다.)]]></value>
+		<value xml:lang="en"><![CDATA[On this page, you can create and delete cryptographic keys, as well as change a few settings. Please note that if you delete a key, you will no longer be able to access data that has been encrypted with it. (You may, however, change the key size, HMAC size, and storage location at any time.)]]></value>
+	</item>
+	<item name="msg_encryption_general_introduction_3">
+		<value xml:lang="ko"><![CDATA[HMAC은 암호화된 데이터의 위변조를 막기 위해 필요하나, 지나치게 긴 HMAC을 사용할 경우 암호화된 데이터의 용량이 크게 늘어날 수 있습니다.]]></value>
+		<value xml:lang="en"><![CDATA[The HMAC helps prevent unauthorized mangling of encrypted data, but excessively large HMAC sizes can make your ciphertexts longer.]]></value>
+	</item>
+</lang>

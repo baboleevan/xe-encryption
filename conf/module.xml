@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module>
+	<grants />
+	<permissions />
+	<actions>
+		<action name="dispEncryptionAdminConfig" type="view" admin_index="true" menu_name="encryption" />
+		<action name="procEncryptionAdminInsertConfig" type="controller" />
+		<action name="getEncryptionAdminNewAESKey" type="model" />
+		<action name="getEncryptionAdminNewRSAKey" type="model" />
+	</actions>
+	<menus>
+		<menu name="encryption" type="all">
+			<title xml:lang="ko">암호화 모듈</title>
+			<title xml:lang="en">Encryption Module</title>
+		</menu>
+	</menus>
+</module>
