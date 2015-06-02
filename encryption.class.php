@@ -24,7 +24,7 @@ class Encryption extends ModuleObject
 	 * 기본 설정 정의.
 	 */
 	protected static $default_config = array(
-		'aes_bits' => 256,
+		'aes_bits' => 128,
 		'aes_hmac_bits' => 128,
 		'aes_store' => 'DB',
 		'aes_key' => null,
