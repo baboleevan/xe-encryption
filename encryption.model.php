@@ -35,26 +35,26 @@ class EncryptionModel extends Encryption
 		if ($this->config === null) $this->config = $this->getConfig();
 		if ($this->config->aes_key === null) return false;
 		
-		// 평문을 압축한다.
-		$plaintext = gzcompress($plaintext);
+		// 평문에 PKCS7 패딩을 적용한다.
+		$plaintext = $this->applyPKCS7Padding($plaintext, 16);
 		
 		// 사용할 키 길이 및 초기화 벡터 크기를 구한다.
-		$cipher = 'rijndael-' . $this->config->aes_bits;
-		$iv = $this->getRandomString(mcrypt_get_iv_size($cipher, 'cbc'));
+		$iv = $this->getRandomString(mcrypt_get_iv_size('rijndael-128', 'cbc'));
 		
 		// 비밀키로부터 암호화 키를 생성한다.
-		$key_size = mcrypt_get_key_size($cipher, 'cbc');
-		$key = substr(hash('sha256', $this->config->aes_key, true), 0, $key_size);
+		$key_size = intval($this->config->aes_bits / 8);
+		$key = substr(hash('sha256', $this->config->aes_key . ':AES-KEY', true), 0, $key_size);
 		
 		// 평문을 암호화한다.
-		$ciphertext = mcrypt_encrypt($cipher, $key, $plaintext, 'cbc', $iv);
+		$ciphertext = mcrypt_encrypt('rijndael-128', $key, $plaintext, 'cbc', $iv);
 		
 		// HMAC을 생성한다.
 		$hmac_size = intval($this->config->aes_hmac_bits / 8);
-		$hmac = substr(hash_hmac('sha256', $ciphertext, $key . $iv, true), 0, $hmac_size);
+		$hmac_key = hash('sha256', $this->config->aes_key . ':HMAC-KEY', true);
+		$hmac = substr(hash_hmac('sha256', $ciphertext, $hmac_key, true), 0, $hmac_size);
 		
 		// 결과를 포맷하여 반환한다.
-		$meta = $this->createMetadata('A', 'K', $this->config->aes_bits, $this->config->aes_hmac_bits);
+		$meta = $this->createMetadata('A', 'E', $this->config->aes_bits, $this->config->aes_hmac_bits);
 		return $meta . base64_encode($iv . $hmac . $ciphertext);
 	}
 	
@@ -73,13 +73,65 @@ class EncryptionModel extends Encryption
 		$meta = $this->decodeMetadata(substr($ciphertext, 0, 4));
 		if ($meta->encryption_type !== 'A') return false;
 		if (!$meta->bits || !$meta->hmac_bits) return false;
+		
+		// 버전에 따라 다른 메소드를 호출한다.
+		switch ($meta->key_type)
+		{
+			case 'E': return $this->aesDecrypt_v2($ciphertext, $meta);
+			case 'K': return $this->aesDecrypt_v1($ciphertext, $meta);
+			default: return false;
+		}
+	}
+	
+	/**
+	 * 대칭키(AES) 복호화 서브루틴: 개선된 버전.
+	 */
+	public function aesDecrypt_v2($ciphertext, $meta)
+	{
+		// 사용할 키 길이 및 초기화 벡터 크기를 구한다.
+		$iv_size = mcrypt_get_iv_size('rijndael-128', 'cbc');
 		$hmac_size = intval($meta->hmac_bits / 8);
 		
+		// 암호문에서 초기화 벡터와 HMAC을 분리한다.
+		if (strlen($ciphertext) % 4 !== 0) return false;
+		$ciphertext = @base64_decode(substr($ciphertext, 4));
+		if ($ciphertext === false) return false;
+		if (strlen($ciphertext) <= $iv_size + $hmac_size) return false;
+		$iv = substr($ciphertext, 0, $iv_size);
+		$hmac = substr($ciphertext, $iv_size, $hmac_size);
+		$ciphertext = substr($ciphertext, $iv_size + $hmac_size);
+		
+		// 비밀키로부터 암호화 키를 생성한다.
+		$key_size = intval($meta->bits / 8);
+		$key = substr(hash('sha256', $this->config->aes_key . ':AES-KEY', true), 0, $key_size);
+		
+		// HMAC이 일치하는지 체크한다.
+		$hmac_key = hash('sha256', $this->config->aes_key . ':HMAC-KEY', true);
+		$hmac_check = substr(hash_hmac('sha256', $ciphertext, $hmac_key, true), 0, $hmac_size);
+		if ($hmac !== $hmac_check) return false;
+		
+		// 복호화를 시도한다.
+		$plaintext = @mcrypt_decrypt('rijndael-128', $key, $ciphertext, 'cbc', $iv);
+		if ($plaintext === false) return false;
+		
+		// PKCS7 패딩을 제거하여 평문을 구한다.
+		$plaintext = $this->stripPKCS7Padding($plaintext, 16);
+		if ($plaintext === false) return false;
+		return $plaintext;
+	}
+	
+	/**
+	 * 대칭키(AES) 복호화 서브루틴: 기존 버전.
+	 */
+	public function aesDecrypt_v1($ciphertext, $meta)
+	{
 		// 사용할 키 길이 및 초기화 벡터 크기를 구한다.
 		$cipher = 'rijndael-' . $meta->bits;
 		$iv_size = mcrypt_get_iv_size($cipher, 'cbc');
+		$hmac_size = intval($meta->hmac_bits / 8);
 		
 		// 암호문에서 초기화 벡터와 HMAC을 분리한다.
+		if (strlen($ciphertext) % 4 !== 0) return false;
 		$ciphertext = @base64_decode(substr($ciphertext, 4));
 		if ($ciphertext === false) return false;
 		if (strlen($ciphertext) <= $iv_size + $hmac_size) return false;
@@ -263,6 +315,28 @@ class EncryptionModel extends Encryption
 		$plaintext = @gzuncompress($plaintext);
 		if ($plaintext === false) return false;
 		return $plaintext;
+	}
+	
+	/**
+	 * PKCS7 패딩을 적용한다.
+	 */
+	protected function applyPKCS7Padding($str, $block_size)
+	{
+		$padding_size = $block_size - (strlen($str) % $block_size);
+		if ($padding_size === 0) $padding_size = $block_size;
+		return $str . str_repeat(chr($padding_size), $padding_size);
+	}
+	
+	/**
+	 * PKCS7 패딩을 제거한다.
+	 */
+	protected function stripPKCS7Padding($str, $block_size)
+	{
+		if (strlen($str) % $block_size !== 0) return false;
+		$padding_size = ord(substr($str, -1));
+		if ($padding_size < 1 || $padding_size > $block_size) return false;
+		if (substr($str, (-1 * $padding_size)) !== str_repeat(chr($padding_size), $padding_size)) return false;
+		return substr($str, 0, strlen($str) - $padding_size);
 	}
 	
 	/**
