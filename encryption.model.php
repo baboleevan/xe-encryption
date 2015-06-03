@@ -168,9 +168,6 @@ class EncryptionModel extends Encryption
 		if ($this->config === null) $this->config = $this->getConfig();
 		if ($this->config->rsa_pubkey === null) return false;
 		
-		// 평문을 압축한다.
-		$plaintext = gzcompress($plaintext);
-		
 		// 공개키를 가져온다.
 		$pubkey = @openssl_pkey_get_public($this->config->rsa_pubkey);
 		if ($pubkey === false) return false;
@@ -187,7 +184,7 @@ class EncryptionModel extends Encryption
 		$hmac = substr(hash_hmac('sha256', $ciphertext, $hmac_key, true), 0, $hmac_size);
 		
 		// 결과를 포맷하여 반환한다.
-		$meta = $this->createMetadata('R', 'U', $this->config->rsa_bits, $this->config->rsa_hmac_bits);
+		$meta = $this->createMetadata('R', 'B', $this->config->rsa_bits, $this->config->rsa_hmac_bits);
 		return $meta . base64_encode($hmac . $ciphertext);
 	}
 	
@@ -205,7 +202,7 @@ class EncryptionModel extends Encryption
 		// 암호화에 사용된 키의 종류 및 HMAC 길이를 파악한다.
 		$meta = $this->decodeMetadata(substr($ciphertext, 0, 4));
 		if ($meta->encryption_type !== 'R') return false;
-		if ($meta->key_type !== 'P') return false;
+		if ($meta->key_type !== 'A' && $meta->key_type !== 'P') return false;
 		if (!$meta->bits || !$meta->hmac_bits) return false;
 		$hmac_size = intval($meta->hmac_bits / 8);
 		
@@ -231,9 +228,14 @@ class EncryptionModel extends Encryption
 		@openssl_pkey_free($pubkey);
 		if (!$status || $plaintext === false) return false;
 		
-		// 압축을 해제하여 평문을 구한다.
-		$plaintext = @gzuncompress($plaintext);
-		if ($plaintext === false) return false;
+		// 압축된 평문인 경우 압축을 해제한다.
+		if ($meta->key_type === 'P')
+		{
+			$plaintext = @gzuncompress($plaintext);
+			if ($plaintext === false) return false;
+		}
+		
+		// 평문을 반환한다.
 		return $plaintext;
 	}
 	
@@ -247,9 +249,6 @@ class EncryptionModel extends Encryption
 		// 모듈 설정을 확인한다.
 		if ($this->config === null) $this->config = $this->getConfig();
 		if ($this->config->rsa_privkey === null || $this->config->rsa_pubkey === null) return false;
-		
-		// 평문을 압축한다.
-		$plaintext = gzcompress($plaintext);
 		
 		// 개인키를 가져온다.
 		$privkey = @openssl_pkey_get_private($this->config->rsa_privkey, strval($passphrase));
@@ -267,7 +266,7 @@ class EncryptionModel extends Encryption
 		$hmac = substr(hash_hmac('sha256', $ciphertext, $hmac_key, true), 0, $hmac_size);
 		
 		// 결과를 포맷하여 반환한다.
-		$meta = $this->createMetadata('R', 'P', $this->config->rsa_bits, $this->config->rsa_hmac_bits);
+		$meta = $this->createMetadata('R', 'A', $this->config->rsa_bits, $this->config->rsa_hmac_bits);
 		return $meta . base64_encode($hmac . $ciphertext);
 	}
 	
@@ -285,7 +284,7 @@ class EncryptionModel extends Encryption
 		// 암호화에 사용된 키의 종류 및 HMAC 길이를 파악한다.
 		$meta = $this->decodeMetadata(substr($ciphertext, 0, 4));
 		if ($meta->encryption_type !== 'R') return false;
-		if ($meta->key_type !== 'U') return false;
+		if ($meta->key_type !== 'B' && $meta->key_type !== 'U') return false;
 		if (!$meta->bits || !$meta->hmac_bits) return false;
 		$hmac_size = intval($meta->hmac_bits / 8);
 		
@@ -311,9 +310,14 @@ class EncryptionModel extends Encryption
 		@openssl_pkey_free($privkey);
 		if (!$status || $plaintext === false) return false;
 		
-		// 압축을 해제하여 평문을 구한다.
-		$plaintext = @gzuncompress($plaintext);
-		if ($plaintext === false) return false;
+		// 압축된 평문인 경우 압축을 해제한다.
+		if ($meta->key_type === 'U')
+		{
+			$plaintext = @gzuncompress($plaintext);
+			if ($plaintext === false) return false;
+		}
+		
+		// 평문을 반환한다.
 		return $plaintext;
 	}
 	
