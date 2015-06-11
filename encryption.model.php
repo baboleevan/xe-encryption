@@ -24,6 +24,22 @@ class EncryptionModel extends Encryption
 	 * 모듈 설정을 여러 번 불러오지 않도록 캐싱해 두는 변수.
 	 */
 	protected $config = null;
+	protected $extension = null;
+	
+	/**
+	 * 생성자.
+	 */
+	public function __construct()
+	{
+		if (version_compare(PHP_VERSION, '5.4', '>=') && function_exists('openssl_encrypt'))
+		{
+			$this->extension = 'openssl';
+		}
+		else
+		{
+			$this->extension = 'mcrypt';
+		}
+	}
 	
 	/**
 	 * 대칭키(AES) 알고리듬으로 문자열을 암호화한다.
@@ -35,18 +51,24 @@ class EncryptionModel extends Encryption
 		if ($this->config === null) $this->config = $this->getConfig();
 		if ($this->config->aes_key === null) return false;
 		
-		// 평문에 PKCS7 패딩을 적용한다.
-		$plaintext = $this->applyPKCS7Padding($plaintext, 16);
-		
-		// 사용할 키 길이 및 초기화 벡터 크기를 구한다.
-		$iv = $this->getRandomString(mcrypt_get_iv_size('rijndael-128', 'cbc'));
-		
 		// 비밀키로부터 암호화 키를 생성한다.
 		$key_size = intval($this->config->aes_bits / 8);
 		$key = substr(hash('sha256', $this->config->aes_key . ':AES-KEY', true), 0, $key_size);
 		
-		// 평문을 암호화한다.
-		$ciphertext = mcrypt_encrypt('rijndael-128', $key, $plaintext, 'cbc', $iv);
+		// 초기화 벡터를 생성한다.
+		$iv = $this->getRandomString(16);
+		
+		// 서버 환경에 따라 openssl 또는 mcrypt 모듈을 사용하여 암호화한다.
+		if ($this->extension === 'openssl')
+		{
+			$openssl_method = 'aes-' . $this->config->aes_bits . '-cbc';
+			$ciphertext = openssl_encrypt($plaintext, $openssl_method, $key, OPENSSL_RAW_DATA, $iv);
+        }
+		else
+		{
+			$plaintext = $this->applyPKCS7Padding($plaintext, 16);
+			$ciphertext = mcrypt_encrypt('rijndael-128', $key, $plaintext, 'cbc', $iv);
+		}
 		
 		// HMAC을 생성한다.
 		$hmac_size = intval($this->config->aes_hmac_bits / 8);
@@ -110,13 +132,21 @@ class EncryptionModel extends Encryption
 		$hmac_check = substr(hash_hmac('sha256', $ciphertext, $hmac_key, true), 0, $hmac_size);
 		if ($hmac !== $hmac_check) return false;
 		
-		// 복호화를 시도한다.
-		$plaintext = @mcrypt_decrypt('rijndael-128', $key, $ciphertext, 'cbc', $iv);
-		if ($plaintext === false) return false;
+		// 서버 환경에 따라 openssl 또는 mcrypt 모듈을 사용하여 복호화한다.
+		if ($this->extension === 'openssl')
+		{
+			$openssl_method = 'aes-' . $this->config->aes_bits . '-cbc';
+			$plaintext = openssl_decrypt($ciphertext, $openssl_method, $key, OPENSSL_RAW_DATA, $iv);
+        }
+		else
+		{
+			$plaintext = @mcrypt_decrypt('rijndael-128', $key, $ciphertext, 'cbc', $iv);
+			if ($plaintext === false) return false;
+			$plaintext = $this->stripPKCS7Padding($plaintext, 16);
+			if ($plaintext === false) return false;
+		}
 		
-		// PKCS7 패딩을 제거하여 평문을 구한다.
-		$plaintext = $this->stripPKCS7Padding($plaintext, 16);
-		if ($plaintext === false) return false;
+		// 평문을 반환한다.
 		return $plaintext;
 	}
 	
