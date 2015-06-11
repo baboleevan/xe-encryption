@@ -112,7 +112,18 @@ class Encryption extends ModuleObject
 	 */
 	public function getRandomString($length)
 	{
-		if (version_compare(PHP_VERSION, '5.4', '>=') || strncasecmp(PHP_OS, 'WIN', 3))
+		static $fp = null;
+		
+		if ($fp === null && strncasecmp(PHP_OS, 'WIN', 3))
+		{
+			$fp = @fopen('/dev/urandom', 'rb');
+		}
+		
+		if ($fp)
+		{
+			return fread($fp, $length);
+		}
+		elseif (version_compare(PHP_VERSION, '5.4', '>=') || strncasecmp(PHP_OS, 'WIN', 3))
 		{
 			return mcrypt_create_iv($length, MCRYPT_DEV_URANDOM);
 		}
