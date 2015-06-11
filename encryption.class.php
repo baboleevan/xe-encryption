@@ -114,9 +114,9 @@ class Encryption extends ModuleObject
 	{
 		static $fp = null;
 		
-		if ($fp === null && strncasecmp(PHP_OS, 'WIN', 3))
+		if ($fp === null)
 		{
-			$fp = @fopen('/dev/urandom', 'rb');
+			$fp = strncasecmp(PHP_OS, 'WIN', 3) ? @fopen('/dev/urandom', 'rb') : false;
 		}
 		
 		if ($fp)
