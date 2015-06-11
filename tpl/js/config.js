@@ -27,6 +27,10 @@ jQuery(function() {
 		$("#encryption_rsa_privkey,#encryption_rsa_pubkey").hide();
 	}
 	
+	$("#encryption_rsa_bits").change(function() {
+		$("#encryption_rsa_bits_hidden").val($(this).val());
+	});
+	
 	$("#encryption_aes_keygen").click(function(event) {
 		event.preventDefault();
 		$(this).attr("disabled", "disabled");

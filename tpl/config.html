@@ -17,7 +17,7 @@
 			<p>{$lang->msg_encryption_general_introduction_3}</p>
 		</div>
 	</section>
-
+	
 	<section class="section">
 	
 		<h2>{$lang->cmd_encryption_symmetric}</h2>
@@ -95,12 +95,13 @@
 		<div class="x_control-group">
 			<label class="x_control-label" for="encryption_rsa_bits">{$lang->cmd_encryption_bits}</label>
 			<div class="x_controls">
-				<select name="rsa_bits" id="encryption_rsa_bits" disabled="disabled"|cond="$encryption_config->rsa_privkey !== null">
+				<select id="encryption_rsa_bits" disabled="disabled"|cond="$encryption_config->rsa_privkey !== null">
 					<option value="1024" selected="selected"|cond="$encryption_config->rsa_bits == 1024">1024{$lang->cmd_encryption_bit_suffix}</option>
 					<option value="2048" selected="selected"|cond="$encryption_config->rsa_bits == 2048">2048{$lang->cmd_encryption_bit_suffix}</option>
 					<option value="3072" selected="selected"|cond="$encryption_config->rsa_bits == 3072">3072{$lang->cmd_encryption_bit_suffix}</option>
 					<option value="4096" selected="selected"|cond="$encryption_config->rsa_bits == 4096">4096{$lang->cmd_encryption_bit_suffix}</option>
 				</select>
+				<input type="hidden" name="rsa_bits" id="encryption_rsa_bits_hidden" value="{$encryption_config->rsa_bits}" />
 			</div>
 		</div>
 		
