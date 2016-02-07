@@ -80,7 +80,7 @@ class EncryptionAdminController extends Encryption
 			@unlink($current_config->aes_store);
 		}
 		
-		// AES 키를 파일에 저장하는 경우 처리.
+		// RSA 키를 파일에 저장하는 경우 처리.
 		if ($args->rsa_store !== 'DB' && $args->rsa_privkey !== null)
 		{
 			// 디렉토리가 존재하지 않는 경우 생성을 시도한다.
